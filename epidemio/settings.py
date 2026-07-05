@@ -23,6 +23,8 @@ ALLOWED_HOSTS = []
 
 CSRF_TRUSTED_ORIGINS = ['https://sanitrax.pythonanywhere.com']
 
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 # Application definition
 
 INSTALLED_APPS = [
