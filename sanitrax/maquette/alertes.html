@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html><head><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Spectral:wght@500;600;700&display=swap" rel="stylesheet"><title>Centre d'alertes — Surveillance Épidémiologique</title><style>
+    .sc-placeholder{background:rgba(255,255,255,.3);border:1px solid rgba(0,0,0,.5);
+      border-radius:2px;box-sizing:border-box;overflow:hidden}
+    @keyframes sc-shine{0%{background-position:100% 50%}100%{background-position:0% 50%}}
+    html.sc-dc-streaming .sc-placeholder,
+    html.sc-dc-streaming .sc-interp.sc-missing{position:relative;
+      background:color-mix(in srgb,currentColor 5%,transparent);
+      border-color:transparent}
+    html.sc-dc-streaming .sc-placeholder::before,
+    html.sc-dc-streaming .sc-interp.sc-missing::before{content:'';
+      position:absolute;inset:0;pointer-events:none;
+      background:linear-gradient(90deg,rgba(217,119,87,0) 25%,rgba(247,225,211,.95) 37%,rgba(217,119,87,0) 63%);
+      background-size:400% 100%;animation:sc-shine 1.4s ease infinite}
+    html.sc-dc-streaming .sc-placeholder:nth-child(n+9 of .sc-placeholder)::before,
+    html.sc-dc-streaming .sc-interp.sc-missing:nth-child(n+9 of .sc-interp.sc-missing)::before{animation:none;
+      background:color-mix(in srgb,currentColor 8%,transparent)}
+    .sc-placeholder-error{padding:4px 8px;font:11px/1.4 ui-monospace,monospace;
+      color:rgba(0,0,0,.7);word-break:break-word}
+    .sc-interp.sc-missing{display:inline-block;width:2em;height:1em;overflow:hidden;
+      vertical-align:text-bottom;background:rgba(255,255,255,.3);border:1px solid rgba(0,0,0,.5);
+      border-radius:2px;box-sizing:border-box;color:transparent;
+      user-select:none}
+    .sc-interp.sc-unresolved{font-family:ui-monospace,monospace;font-size:.85em;
+      color:rgba(0,0,0,.5);background:rgba(0,0,0,.05);border-radius:3px;
+      padding:0 3px}
+    .sc-host.sc-has-error{position:relative}
+    .sc-logic-error{position:absolute;top:8px;left:8px;z-index:2147483647;max-width:60ch;
+      padding:6px 10px;background:#b00020;color:#fff;font:12px/1.4 ui-monospace,monospace;
+      border-radius:4px;white-space:pre-wrap;pointer-events:none}
+    /* Mirrors PRINT_BASELINE_CSS in apps/web deck-stage-export.ts — keep both
+       in sync until dc-runtime regains a build step. */
+    @media print {
+      @page { margin: 0.5cm; }
+      figure, table { break-inside: avoid; }
+      #dc-root, #dc-root > .sc-host { height: auto; }
+      *, *::before, *::after {
+        print-color-adjust: exact; -webkit-print-color-adjust: exact;
+        backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+        animation-delay: -99s !important; animation-duration: .001s !important;
+        animation-iteration-count: 1 !important; animation-fill-mode: both !important;
+        animation-play-state: running !important; transition-duration: 0s !important;
+      }
+    }
+  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>x-dc{display:none!important}</style><style></style><link rel="preconnect" href="https://fonts.googleapis.com" data-dc-tpl="1"><link rel="preconnect" href="https://fonts.gstatic.com" data-dc-tpl="2"><style data-dc-tpl="3">/* cyrillic-ext */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/16e634f6-0688-4d65-a383-c255b8c7fc90") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/c60c0f0b-ea1f-4dc7-be81-5498d9436622") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/d7f5cfa2-460d-4d73-bfb5-a600ef7eb23e") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/32b46fa7-9e66-446b-9158-41663587ff7d") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/9f02987e-ebe4-4944-b957-eb81246cb4ef") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/f55da96d-b7c0-4d39-85e9-8e2f6e17bbd5") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/f7698862-477f-4d55-92e8-39cda00c42dd") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/814ed61b-1381-436a-8a2c-306d83a44b69") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/3501717d-a9ff-41f6-b4bf-495830be28e2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/d7f50d4b-cf23-4443-b3e2-90898c27acb6") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/10bf7a2d-768e-4a14-af99-562f28c63ba7") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/ee8c43aa-4cd0-4bc1-80d2-4fb0954d99b5") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/b9ab85ee-c26c-43db-9e5a-46ac3a02cc3f") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/f6916a4a-b1f3-43fe-9c7b-8ded6953108a") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/8e88513e-4eb6-493f-98fd-683668d840c7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/11fd3104-f6d0-4da6-a473-c9c4f2eec012") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/10bf7a2d-768e-4a14-af99-562f28c63ba7") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/ee8c43aa-4cd0-4bc1-80d2-4fb0954d99b5") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/b9ab85ee-c26c-43db-9e5a-46ac3a02cc3f") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/f6916a4a-b1f3-43fe-9c7b-8ded6953108a") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/8e88513e-4eb6-493f-98fd-683668d840c7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/11fd3104-f6d0-4da6-a473-c9c4f2eec012") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/10bf7a2d-768e-4a14-af99-562f28c63ba7") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/ee8c43aa-4cd0-4bc1-80d2-4fb0954d99b5") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/b9ab85ee-c26c-43db-9e5a-46ac3a02cc3f") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/f6916a4a-b1f3-43fe-9c7b-8ded6953108a") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/8e88513e-4eb6-493f-98fd-683668d840c7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/11fd3104-f6d0-4da6-a473-c9c4f2eec012") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/10bf7a2d-768e-4a14-af99-562f28c63ba7") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/ee8c43aa-4cd0-4bc1-80d2-4fb0954d99b5") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/b9ab85ee-c26c-43db-9e5a-46ac3a02cc3f") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/f6916a4a-b1f3-43fe-9c7b-8ded6953108a") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/8e88513e-4eb6-493f-98fd-683668d840c7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/11fd3104-f6d0-4da6-a473-c9c4f2eec012") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/cb9ca6c8-b2de-4bf2-a021-368455801fef") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/a34f501f-5d17-48bd-85b9-a7a20574de97") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/40df7d60-388c-4c57-87dd-1dd8a3fff20f") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/4a741ad4-7875-4f52-9019-e8d9a6887b76") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/aa207d26-2149-4edb-9b2b-a10320e198ef") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/fe958067-bb37-4a41-932d-c6f800beafc8") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/df7ebd83-74a8-4ffc-8b88-ebe90925b08f") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/bf8000fb-22d8-422a-945a-e502cc2566dd") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/c5c46566-61af-432e-a4c3-27b5012c870e") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/63bf3433-5c98-471d-adf7-6fcf4cdc7926") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/995db7e5-21ce-41ea-b659-0f972cde5ff7") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/8101f008-9392-43ab-9ec6-300d467a9cf2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/05822d53-3f93-4876-937d-87664d8a8d16") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/8237302a-a76e-4da9-b0d7-2cfe62e19f58") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/b1669a74-1e8b-46da-b22e-8b6a01e42cec") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/7236ef60-b143-4f1a-98bf-89a6f8254a13") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/d46f6d13-36ac-43d8-a873-262b0924e365") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/201b1d8e-7151-42e3-9a48-9a18270f88da") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/089428bd-cc3a-4e6d-9aa7-9ba9955043b4") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("blob:http://localhost:8123/c789d9df-32eb-46cf-bce7-2b84f0b2c3b9") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style><style data-dc-tpl="4">/* required styles */
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	}
+.leaflet-container {
+	overflow: hidden;
+	}
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	  -webkit-user-drag: none;
+	}
+/* Prevents IE11 from highlighting tiles in blue */
+.leaflet-tile::selection {
+	background: transparent;
+}
+/* Safari renders non-retina tile on retina better with this, but Chrome is worse */
+.leaflet-safari .leaflet-tile {
+	image-rendering: -webkit-optimize-contrast;
+	}
+/* hack that prevents hw layers "stretching" when loading new tiles */
+.leaflet-safari .leaflet-tile-container {
+	width: 1600px;
+	height: 1600px;
+	-webkit-transform-origin: 0 0;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	display: block;
+	}
+/* .leaflet-container svg: reset svg max-width decleration shipped in Joomla! (joomla.org) 3.x */
+/* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */
+.leaflet-container .leaflet-overlay-pane svg {
+	max-width: none !important;
+	max-height: none !important;
+	}
+.leaflet-container .leaflet-marker-pane img,
+.leaflet-container .leaflet-shadow-pane img,
+.leaflet-container .leaflet-tile-pane img,
+.leaflet-container img.leaflet-image-layer,
+.leaflet-container .leaflet-tile {
+	max-width: none !important;
+	max-height: none !important;
+	width: auto;
+	padding: 0;
+	}
+
+.leaflet-container img.leaflet-tile {
+	/* See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
+	mix-blend-mode: plus-lighter;
+}
+
+.leaflet-container.leaflet-touch-zoom {
+	-ms-touch-action: pan-x pan-y;
+	touch-action: pan-x pan-y;
+	}
+.leaflet-container.leaflet-touch-drag {
+	-ms-touch-action: pinch-zoom;
+	/* Fallback for FF which doesn't support pinch-zoom */
+	touch-action: none;
+	touch-action: pinch-zoom;
+}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.leaflet-container {
+	-webkit-tap-highlight-color: transparent;
+}
+.leaflet-container a {
+	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+}
+.leaflet-tile {
+	filter: inherit;
+	visibility: hidden;
+	}
+.leaflet-tile-loaded {
+	visibility: inherit;
+	}
+.leaflet-zoom-box {
+	width: 0;
+	height: 0;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	z-index: 800;
+	}
+/* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */
+.leaflet-overlay-pane svg {
+	-moz-user-select: none;
+	}
+
+.leaflet-pane         { z-index: 400; }
+
+.leaflet-tile-pane    { z-index: 200; }
+.leaflet-overlay-pane { z-index: 400; }
+.leaflet-shadow-pane  { z-index: 500; }
+.leaflet-marker-pane  { z-index: 600; }
+.leaflet-tooltip-pane   { z-index: 650; }
+.leaflet-popup-pane   { z-index: 700; }
+
+.leaflet-map-pane canvas { z-index: 100; }
+.leaflet-map-pane svg    { z-index: 200; }
+
+.leaflet-vml-shape {
+	width: 1px;
+	height: 1px;
+	}
+.lvml {
+	behavior: url(#default#VML);
+	display: inline-block;
+	position: absolute;
+	}
+
+
+/* control positioning */
+
+.leaflet-control {
+	position: relative;
+	z-index: 800;
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+.leaflet-top,
+.leaflet-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	}
+.leaflet-top {
+	top: 0;
+	}
+.leaflet-right {
+	right: 0;
+	}
+.leaflet-bottom {
+	bottom: 0;
+	}
+.leaflet-left {
+	left: 0;
+	}
+.leaflet-control {
+	float: left;
+	clear: both;
+	}
+.leaflet-right .leaflet-control {
+	float: right;
+	}
+.leaflet-top .leaflet-control {
+	margin-top: 10px;
+	}
+.leaflet-bottom .leaflet-control {
+	margin-bottom: 10px;
+	}
+.leaflet-left .leaflet-control {
+	margin-left: 10px;
+	}
+.leaflet-right .leaflet-control {
+	margin-right: 10px;
+	}
+
+
+/* zoom and fade animations */
+
+.leaflet-fade-anim .leaflet-popup {
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+	   -moz-transition: opacity 0.2s linear;
+	        transition: opacity 0.2s linear;
+	}
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+	opacity: 1;
+	}
+.leaflet-zoom-animated {
+	-webkit-transform-origin: 0 0;
+	    -ms-transform-origin: 0 0;
+	        transform-origin: 0 0;
+	}
+svg.leaflet-zoom-animated {
+	will-change: transform;
+}
+
+.leaflet-zoom-anim .leaflet-zoom-animated {
+	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
+	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
+	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
+	}
+.leaflet-zoom-anim .leaflet-tile,
+.leaflet-pan-anim .leaflet-tile {
+	-webkit-transition: none;
+	   -moz-transition: none;
+	        transition: none;
+	}
+
+.leaflet-zoom-anim .leaflet-zoom-hide {
+	visibility: hidden;
+	}
+
+
+/* cursors */
+
+.leaflet-interactive {
+	cursor: pointer;
+	}
+.leaflet-grab {
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
+	cursor:         grab;
+	}
+.leaflet-crosshair,
+.leaflet-crosshair .leaflet-interactive {
+	cursor: crosshair;
+	}
+.leaflet-popup-pane,
+.leaflet-control {
+	cursor: auto;
+	}
+.leaflet-dragging .leaflet-grab,
+.leaflet-dragging .leaflet-grab .leaflet-interactive,
+.leaflet-dragging .leaflet-marker-draggable {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor:    -moz-grabbing;
+	cursor:         grabbing;
+	}
+
+/* marker & overlays interactivity */
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-image-layer,
+.leaflet-pane > svg path,
+.leaflet-tile-container {
+	pointer-events: none;
+	}
+
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive,
+svg.leaflet-image-layer.leaflet-interactive path {
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+
+/* visual tweaks */
+
+.leaflet-container {
+	background: #ddd;
+	outline-offset: 1px;
+	}
+.leaflet-container a {
+	color: #0078A8;
+	}
+.leaflet-zoom-box {
+	border: 2px dotted #38f;
+	background: rgba(255,255,255,0.5);
+	}
+
+
+/* general typography */
+.leaflet-container {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	}
+
+
+/* general toolbar styles */
+
+.leaflet-bar {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+	border-radius: 4px;
+	}
+.leaflet-bar a {
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	}
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+	}
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+	background-color: #f4f4f4;
+	}
+.leaflet-bar a:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	}
+.leaflet-bar a:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom: none;
+	}
+.leaflet-bar a.leaflet-disabled {
+	cursor: default;
+	background-color: #f4f4f4;
+	color: #bbb;
+	}
+
+.leaflet-touch .leaflet-bar a {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	}
+.leaflet-touch .leaflet-bar a:first-child {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	}
+.leaflet-touch .leaflet-bar a:last-child {
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+	}
+
+/* zoom control */
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	font: bold 18px 'Lucida Console', Monaco, monospace;
+	text-indent: 1px;
+	}
+
+.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {
+	font-size: 22px;
+	}
+
+
+/* layers control */
+
+.leaflet-control-layers {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
+	}
+.leaflet-control-layers-toggle {
+	background-image: url("blob:http://localhost:8123/36ba427f-5254-4a4f-aa04-94833d372ab3");
+	width: 36px;
+	height: 36px;
+	}
+.leaflet-retina .leaflet-control-layers-toggle {
+	background-image: url("blob:http://localhost:8123/769ceb61-a563-47e5-8fee-fca45d65910e");
+	background-size: 26px 26px;
+	}
+.leaflet-touch .leaflet-control-layers-toggle {
+	width: 44px;
+	height: 44px;
+	}
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
+	display: none;
+	}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+	display: block;
+	position: relative;
+	}
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
+.leaflet-control-layers-scrollbar {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	}
+.leaflet-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+	}
+.leaflet-control-layers label {
+	display: block;
+	font-size: 13px;
+	font-size: 1.08333em;
+	}
+.leaflet-control-layers-separator {
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
+	}
+
+/* Default icon URLs */
+.leaflet-default-icon-path { /* used only in path-guessing heuristic, see L.Icon.Default */
+	background-image: url("blob:http://localhost:8123/0dc7e2ff-acc4-47c2-b124-3cb64a9fe77f");
+	}
+
+
+/* attribution and scale controls */
+
+.leaflet-container .leaflet-control-attribution {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.8);
+	margin: 0;
+	}
+.leaflet-control-attribution,
+.leaflet-control-scale-line {
+	padding: 0 5px;
+	color: #333;
+	line-height: 1.4;
+	}
+.leaflet-control-attribution a {
+	text-decoration: none;
+	}
+.leaflet-control-attribution a:hover,
+.leaflet-control-attribution a:focus {
+	text-decoration: underline;
+	}
+.leaflet-attribution-flag {
+	display: inline !important;
+	vertical-align: baseline !important;
+	width: 1em;
+	height: 0.6669em;
+	}
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	}
+.leaflet-bottom .leaflet-control-scale {
+	margin-bottom: 5px;
+	}
+.leaflet-control-scale-line {
+	border: 2px solid #777;
+	border-top: none;
+	line-height: 1.1;
+	padding: 2px 5px 1px;
+	white-space: nowrap;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.8);
+	text-shadow: 1px 1px #fff;
+	}
+.leaflet-control-scale-line:not(:first-child) {
+	border-top: 2px solid #777;
+	border-bottom: none;
+	margin-top: -2px;
+	}
+.leaflet-control-scale-line:not(:first-child):not(:last-child) {
+	border-bottom: 2px solid #777;
+	}
+
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	box-shadow: none;
+	}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+	}
+
+
+/* popup */
+
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: 12px;
+	}
+.leaflet-popup-content {
+	margin: 13px 24px 13px 20px;
+	line-height: 1.3;
+	font-size: 13px;
+	font-size: 1.08333em;
+	min-height: 1px;
+	}
+.leaflet-popup-content p {
+	margin: 17px 0;
+	margin: 1.3em 0;
+	}
+.leaflet-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-top: -1px;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+
+	margin: -10px auto 0;
+	pointer-events: auto;
+
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+	color: #333;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: none;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	font: 16px/24px Tahoma, Verdana, sans-serif;
+	color: #757575;
+	text-decoration: none;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+	color: #585858;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	}
+
+.leaflet-oldie .leaflet-popup-content-wrapper {
+	-ms-zoom: 1;
+	}
+.leaflet-oldie .leaflet-popup-tip {
+	width: 24px;
+	margin: 0 auto;
+
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	}
+
+.leaflet-oldie .leaflet-control-zoom,
+.leaflet-oldie .leaflet-control-layers,
+.leaflet-oldie .leaflet-popup-content-wrapper,
+.leaflet-oldie .leaflet-popup-tip {
+	border: 1px solid #999;
+	}
+
+
+/* div icon */
+
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+	}
+
+
+/* Tooltip */
+/* Base styles for the element that has a tooltip */
+.leaflet-tooltip {
+	position: absolute;
+	padding: 6px;
+	background-color: #fff;
+	border: 1px solid #fff;
+	border-radius: 3px;
+	color: #222;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+	}
+.leaflet-tooltip.leaflet-interactive {
+	cursor: pointer;
+	pointer-events: auto;
+	}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+	}
+
+/* Directions */
+
+.leaflet-tooltip-bottom {
+	margin-top: 6px;
+}
+.leaflet-tooltip-top {
+	margin-top: -6px;
+}
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-top:before {
+	left: 50%;
+	margin-left: -6px;
+	}
+.leaflet-tooltip-top:before {
+	bottom: 0;
+	margin-bottom: -12px;
+	border-top-color: #fff;
+	}
+.leaflet-tooltip-bottom:before {
+	top: 0;
+	margin-top: -12px;
+	margin-left: -6px;
+	border-bottom-color: #fff;
+	}
+.leaflet-tooltip-left {
+	margin-left: -6px;
+}
+.leaflet-tooltip-right {
+	margin-left: 6px;
+}
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	top: 50%;
+	margin-top: -6px;
+	}
+.leaflet-tooltip-left:before {
+	right: 0;
+	margin-right: -12px;
+	border-left-color: #fff;
+	}
+.leaflet-tooltip-right:before {
+	left: 0;
+	margin-left: -12px;
+	border-right-color: #fff;
+	}
+
+/* Printing */
+
+@media print {
+	/* Prevent printers from removing background-images of controls. */
+	.leaflet-control {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		}
+	}
+</style><style data-dc-tpl="6">
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#EDF1F6}
+  ::selection{background:#1763C6;color:#fff}
+  .scrl{scrollbar-width:thin;scrollbar-color:#C3CFDE transparent}
+  .scrl::-webkit-scrollbar{width:9px;height:9px}
+  .scrl::-webkit-scrollbar-thumb{background:#C3CFDE;border-radius:6px}
+  @keyframes pulseDot{0%{box-shadow:0 0 0 0 rgba(214,69,42,.5)}70%{box-shadow:0 0 0 7px rgba(214,69,42,0)}100%{box-shadow:0 0 0 0 rgba(214,69,42,0)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes drawLine{from{stroke-dashoffset:0}to{stroke-dashoffset:0}}
+  @keyframes growBar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+  @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+  @keyframes ringSpin{to{transform:rotate(360deg)}}
+  @keyframes mkPulse{0%{transform:scale(1);opacity:.4}70%{transform:scale(2.4);opacity:0}100%{opacity:0}}
+  @keyframes popIn{from{transform:scale(.985) translateY(6px)}to{transform:none}}
+  .sn-div{background:none;border:none}
+  .rev{animation:popIn .5s cubic-bezier(.2,.7,.3,1) both}
+  .lift{transition:transform .18s ease, box-shadow .18s ease}
+  .lift:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(16,44,73,.12)}
+  .leaflet-container{font-family:'IBM Plex Sans',sans-serif;background:#EAF1F8}
+  .leaflet-popup-content-wrapper{border-radius:9px;box-shadow:0 10px 30px rgba(16,44,73,.22)}
+  .leaflet-popup-content{margin:11px 14px;font-size:12.5px}
+  .leaflet-bar a{color:#0E2C49}
+  .sn-mk{filter:drop-shadow(0 2px 4px rgba(16,44,73,.25));transition:all .25s ease}
+</style></head>
+<body>
+<div id="dc-root"><div class="sc-host" data-sc-name="design"><div data-dc-tpl="7" style="position: fixed; inset: 0px; display: flex; flex-direction: column; font-family: &quot;IBM Plex Sans&quot;, sans-serif; color: rgb(16, 44, 73); background: rgb(237, 241, 246); overflow: hidden;">
+
+  
+  <header data-dc-tpl="8" style="flex: 0 0 auto; display: flex; align-items: center; gap: 18px; height: 66px; padding: 0px 22px; background: rgb(255, 255, 255); color: rgb(16, 44, 73); border-bottom: 1px solid rgb(226, 233, 241); box-shadow: rgba(16, 44, 73, 0.02) 0px 1px 0px; z-index: 30;">
+    <div data-dc-tpl="9" style="display: flex; align-items: center; gap: 12px;">
+      <span style="font-family:Spectral,serif;font-weight:700;font-size:20px;letter-spacing:-.3px;color:#0E2C49">Sanitrax</span>
+      <span data-dc-tpl="11" style="width: 1px; height: 30px; background: rgb(226, 233, 241);"></span>
+      <div data-dc-tpl="12" style="font-size: 10.5px; letter-spacing: 0.5px; text-transform: uppercase; color: rgb(90, 112, 136); line-height: 1.3; font-weight: 500;"><span class="sc-interp">MSAS · République du Sénégal</span></div>
+    </div>
+
+    <div data-dc-tpl="13" style="flex: 1 1 0%;"></div>
+
+    <div data-dc-tpl="14" style="display: flex; align-items: center; gap: 9px; background: rgb(241, 246, 251); border: 1px solid rgb(226, 233, 241); padding: 7px 13px; border-radius: 7px; font-size: 12px;">
+      <svg data-dc-tpl="15" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7388A0" stroke-width="1.8"><rect data-dc-tpl="16" x="3" y="4" width="18" height="17" rx="2"></rect><path data-dc-tpl="17" d="M3 9h18M8 2v4M16 2v4"></path></svg>
+      <span data-dc-tpl="18" style="color: rgb(90, 112, 136);"><span class="sc-interp">Semaine épi.</span></span>
+      <span data-dc-tpl="19" style="font-family: &quot;IBM Plex Mono&quot;, monospace; font-weight: 600; color: rgb(16, 44, 73);"><span class="sc-interp">S25 · 2026</span></span>
+      <span data-dc-tpl="20" style="width: 1px; height: 14px; background: rgb(214, 224, 236); margin: 0px 3px;"></span>
+      <span data-dc-tpl="21" style="display: inline-flex; width: 7px; height: 7px; border-radius: 50%; background: rgb(33, 179, 107); box-shadow: rgba(33, 179, 107, 0.18) 0px 0px 0px 3px;"></span>
+      <span data-dc-tpl="22" style="color: rgb(33, 146, 91); font-weight: 600;"><span class="sc-interp">En ligne</span></span>
+    </div>
+
+    <button data-dc-tpl="23" class="scp0" style="position: relative; display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background: rgb(241, 246, 251); border: 1px solid rgb(226, 233, 241); border-radius: 7px; cursor: pointer; color: rgb(61, 88, 114);">
+      <svg data-dc-tpl="24" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path data-dc-tpl="25" d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path data-dc-tpl="26" d="M10 21a2 2 0 0 0 4 0"></path></svg>
+      <span data-dc-tpl="27" style="position: absolute; top: -5px; right: -5px; min-width: 18px; height: 18px; padding: 0px 4px; background: rgb(214, 69, 42); color: rgb(255, 255, 255); border-radius: 9px; font-size: 10.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid rgb(255, 255, 255); animation: 2.2s ease 0s infinite normal none running pulseDot;"><span class="sc-interp">4</span></span>
+    </button>
+
+    <div data-dc-tpl="28" style="display: flex; border: 1px solid rgb(226, 233, 241); border-radius: 7px; overflow: hidden; font-size: 11.5px; font-weight: 600;">
+      <button data-dc-tpl="29" style="padding: 7px 13px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; cursor: pointer; font-family: &quot;IBM Plex Sans&quot;; font-weight: 600; font-size: 11.5px; transition: 0.15s; background: linear-gradient(100deg, rgb(23, 99, 198), rgb(43, 163, 76)); color: rgb(255, 255, 255);">FR</button>
+      <button data-dc-tpl="30" style="padding: 7px 13px; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; cursor: pointer; font-family: &quot;IBM Plex Sans&quot;; font-weight: 600; font-size: 11.5px; transition: 0.15s; background: transparent; color: rgb(90, 112, 136);">EN</button>
+    </div>
+
+    <div data-dc-tpl="31" style="display: flex; align-items: center; gap: 10px; padding-left: 4px;">
+      <div data-dc-tpl="32" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, rgb(23, 99, 198), rgb(43, 163, 76)); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; color: rgb(255, 255, 255);">AD</div>
+      <div data-dc-tpl="33" style="line-height: 1.15;">
+        <div data-dc-tpl="34" style="font-size: 12.5px; font-weight: 600;">Dr. A. Diallo</div>
+        <div data-dc-tpl="35" style="font-size: 10.5px; color: rgb(115, 136, 160);"><span class="sc-interp">Épidémiologiste national</span></div>
+      </div>
+    </div>
+  </header>
+
+  <div data-dc-tpl="36" style="flex: 1 1 0%; display: flex; min-height: 0px;">
+
+    
+    <nav data-dc-tpl="37" style="flex: 0 0 auto; width: 236px; background: linear-gradient(185deg, rgb(14, 44, 73), rgb(10, 33, 56)); color: rgb(159, 179, 200); display: flex; flex-direction: column; padding: 14px 12px; z-index: 20;">
+      <div data-dc-tpl="38" style="font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: rgb(94, 119, 144); padding: 6px 12px 10px;"><span class="sc-interp">Navigation</span></div>
+      
+        <button data-dc-tpl="40" style="display: flex; align-items: center; gap: 11px; width: 100%; padding: 10px 12px 10px 15px; margin-bottom: 2px; border-width: medium medium medium 3px; border-style: none none none solid; border-color: currentcolor currentcolor currentcolor transparent; border-image: initial; border-radius: 7px; cursor: pointer; font-family: &quot;IBM Plex Sans&quot;; font-size: 13px; font-weight: 500; text-align: left; transition: background 0.18s; background: transparent; color: rgb(159, 179, 200);">
+          <svg data-dc-tpl="41" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" style="flex: 0 0 auto;"><path data-dc-tpl="42" d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"></path></svg>
+          <span data-dc-tpl="43" style="flex: 1 1 0%; text-align: left;"><span class="sc-interp">Vue d'ensemble</span></span>
+          
+        </button>
+      
+        <button data-dc-tpl="40" style="display: flex; align-items: center; gap: 11px; width: 100%; padding: 10px 12px 10px 15px; margin-bottom: 2px; border-width: medium medium medium 3px; border-style: none none none solid; border-color: currentcolor currentcolor currentcolor transparent; border-image: initial; border-radius: 7px; cursor: pointer; font-family: &quot;IBM Plex Sans&quot;; font-size: 13px; font-weight: 500; text-align: left; transition: background 0.18s; background: transparent; color: rgb(159, 179, 200);">
+          <svg data-dc-tpl="41" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" style="flex: 0 0 auto;"><path data-dc-tpl="42" d="M9 3 3 5v16l6-2 6 2 6-2V3l-6 2-6-2zM9 3v16M15 5v16"></path></svg>
+          <span data-dc-tpl="43" style="flex: 1 1 0%; text-align: left;"><span class="sc-interp">Carte &amp; heatmap</span></span>
+          
+        </button>
+      
+        <button data-dc-tpl="40" style="display: flex; align-items: center; gap: 11px; width: 100%; padding: 10px 12px 10px 15px; margin-bottom: 2px; border-width: medium medium medium 3px; border-style: none none none solid; border-color: currentcolor currentcolor currentcolor transparent; border-image: initial; border-radius: 7px; cursor: pointer; font-family: &quot;IBM Plex Sans&quot;; font-size: 13px; font-weight: 500; text-align: left; transition: background 0.18s; background: transparent; color: rgb(159, 179, 200);">
+          <svg data-dc-tpl="41" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" style="flex: 0 0 auto;"><path data-dc-tpl="42" d="M3 12h4l3 8 4-16 3 8h4"></path></svg>
+          <span data-dc-tpl="43" style="flex: 1 1 0%; text-align: left;"><span class="sc-interp">Maladies</span></span>
+          
+        </button>
+      
+        <button data-dc-tpl="40" style="display: flex; align-items: center; gap: 11px; width: 100%; padding: 10px 12px; margin-bottom: 2px; border-width: medium medium medium 3px; border-style: none none none solid; border-color: currentcolor currentcolor currentcolor rgb(43, 203, 106); border-image: initial; border-radius: 7px; cursor: pointer; font-family: &quot;IBM Plex Sans&quot;; font-size: 13px; font-weight: 600; text-align: left; transition: background 0.18s; background: linear-gradient(100deg, rgba(23, 99, 198, 0.3), rgba(43, 163, 76, 0.26)); color: rgb(242, 248, 255);">
+          <svg data-dc-tpl="41" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" style="flex: 0 0 auto;"><path data-dc-tpl="42" d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0"></path></svg>
+          <span data-dc-tpl="43" style="flex: 1 1 0%; text-align: left;"><span class="sc-interp">Centre d'alertes</span></span>
+          
+            <span data-dc-tpl="45" style="min-width: 20px; height: 18px; padding: 0px 5px; background: rgb(214, 69, 42); color: rgb(255, 255, 255); border-radius: 9px; font-size: 10.5px; font-weight: 700; display: flex; align-items: center; justify-content: center;"><span class="sc-interp">4</span></span>
+          
+        </button>
+      
+        <button data-dc-tpl="40" style="display: flex; align-items: center; gap: 11px; width: 100%; padding: 10px 12px 10px 15px; margin-bottom: 2px; border-width: medium medium medium 3px; border-style: none none none solid; border-color: currentcolor currentcolor currentcolor transparent; border-image: initial; border-radius: 7px; cursor: pointer; font-family: &quot;IBM Plex Sans&quot;; font-size: 13px; font-weight: 500; text-align: left; transition: background 0.18s; background: transparent; color: rgb(159, 179, 200);">
+          <svg data-dc-tpl="41" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" style="flex: 0 0 auto;"><path data-dc-tpl="42" d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M12 12v6M9 15h6"></path></svg>
+          <span data-dc-tpl="43" style="flex: 1 1 0%; text-align: left;"><span class="sc-interp">Déclaration</span></span>
+          
+        </button>
+      
+        <button data-dc-tpl="40" style="display: flex; align-items: center; gap: 11px; width: 100%; padding: 10px 12px 10px 15px; margin-bottom: 2px; border-width: medium medium medium 3px; border-style: none none none solid; border-color: currentcolor currentcolor currentcolor transparent; border-image: initial; border-radius: 7px; cursor: pointer; font-family: &quot;IBM Plex Sans&quot;; font-size: 13px; font-weight: 500; text-align: left; transition: background 0.18s; background: transparent; color: rgb(159, 179, 200);">
+          <svg data-dc-tpl="41" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" style="flex: 0 0 auto;"><path data-dc-tpl="42" d="M4 20V10M10 20V4M16 20v-7M21 20H3"></path></svg>
+          <span data-dc-tpl="43" style="flex: 1 1 0%; text-align: left;"><span class="sc-interp">Rapports</span></span>
+          
+        </button>
+      
+
+      <div data-dc-tpl="46" style="flex: 1 1 0%;"></div>
+      <div data-dc-tpl="47" style="margin: 0px 6px; padding: 13px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px;">
+        <div data-dc-tpl="48" style="display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 600; color: rgb(229, 238, 247); margin-bottom: 8px;">
+          <span data-dc-tpl="49" style="width: 8px; height: 8px; border-radius: 50%; background: rgb(33, 179, 107); flex: 0 0 auto; box-shadow: rgba(33, 179, 107, 0.22) 0px 0px 0px 3px;"></span><span class="sc-interp">État du réseau</span>
+        </div>
+        <div data-dc-tpl="50" style="font-size: 10.5px; color: rgb(141, 162, 186);">
+          <div data-dc-tpl="51" style="display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px;"><span data-dc-tpl="52" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><span class="sc-interp">Districts actifs</span></span><span data-dc-tpl="53" style="font-family: &quot;IBM Plex Mono&quot;, monospace; color: rgb(199, 214, 230); flex: 0 0 auto; white-space: nowrap;">79 / 79</span></div>
+          <div data-dc-tpl="54" style="display: flex; justify-content: space-between; gap: 8px;"><span data-dc-tpl="55" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><span class="sc-interp">Complétude</span></span><span data-dc-tpl="56" style="font-family: &quot;IBM Plex Mono&quot;, monospace; color: rgb(199, 214, 230); flex: 0 0 auto; white-space: nowrap;">96,2 %</span></div>
+        </div>
+      </div>
+      <div data-dc-tpl="57" style="padding: 12px 14px 4px; font-size: 10px; color: rgb(78, 101, 126); line-height: 1.5;"><span class="sc-interp">SNSE · v2.4 — Données simulées à des fins de démonstration.</span></div>
+    </nav>
+
+    
+    <main data-dc-tpl="58" class="scrl" style="flex: 1 1 0%; min-width: 0px; overflow: hidden auto; background: rgb(237, 241, 246);">
+
+      
+      
+
+      
+      
+
+      
+      
+
+      
+      
+      <div data-dc-tpl="270" style="padding: 24px 28px 40px; max-width: 1320px;">
+        <div data-dc-tpl="271" style="margin-bottom: 18px;">
+          <div data-dc-tpl="272" style="font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; color: rgb(23, 99, 198); font-weight: 600; margin-bottom: 5px;"><span class="sc-interp">Centre d'alertes</span></div>
+          <h1 data-dc-tpl="273" style="font-family: Spectral, serif; font-size: 28px; font-weight: 600; letter-spacing: -0.2px;"><span class="sc-interp">Centre d'alertes automatiques</span></h1>
+          <div data-dc-tpl="274" style="font-size: 13px; color: rgb(90, 107, 117); margin-top: 5px;"><span class="sc-interp">Détection sur dépassement de seuil épidémique</span></div>
+        </div>
+
+        <div data-dc-tpl="275" style="display: flex; gap: 9px; margin-bottom: 16px; flex-wrap: wrap;">
+          
+            <button data-dc-tpl="277" style="display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: &quot;IBM Plex Sans&quot;; border: 1px solid rgb(14, 44, 73); background: rgb(14, 44, 73); color: rgb(255, 255, 255);"><span class="sc-interp">Toutes</span><span data-dc-tpl="278" style="font-family: &quot;IBM Plex Mono&quot;, monospace; opacity: 0.7;"><span class="sc-interp">4</span></span></button>
+          
+            <button data-dc-tpl="277" style="display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: &quot;IBM Plex Sans&quot;; border: 1px solid rgb(214, 221, 218); background: rgb(255, 255, 255); color: rgb(58, 74, 69);"><span class="sc-interp">Actives</span><span data-dc-tpl="278" style="font-family: &quot;IBM Plex Mono&quot;, monospace; opacity: 0.7;"><span class="sc-interp">3</span></span></button>
+          
+            <button data-dc-tpl="277" style="display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: &quot;IBM Plex Sans&quot;; border: 1px solid rgb(214, 221, 218); background: rgb(255, 255, 255); color: rgb(58, 74, 69);"><span class="sc-interp">Prises en charge</span><span data-dc-tpl="278" style="font-family: &quot;IBM Plex Mono&quot;, monospace; opacity: 0.7;"><span class="sc-interp">1</span></span></button>
+          
+            <button data-dc-tpl="277" style="display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 6px; font-size: 12.5px; font-weight: 600; cursor: pointer; font-family: &quot;IBM Plex Sans&quot;; border: 1px solid rgb(214, 221, 218); background: rgb(255, 255, 255); color: rgb(58, 74, 69);"><span class="sc-interp">Résolues</span><span data-dc-tpl="278" style="font-family: &quot;IBM Plex Mono&quot;, monospace; opacity: 0.7;"><span class="sc-interp">0</span></span></button>
+          
+        </div>
+
+        <div data-dc-tpl="279" style="background: rgb(255, 255, 255); border: 1px solid rgb(220, 227, 224); border-radius: 7px; overflow: hidden;">
+          <div data-dc-tpl="280" style="display: grid; grid-template-columns: 30px 1.6fr 1fr 1.3fr 1fr 110px; gap: 12px; padding: 11px 16px; border-bottom: 1px solid rgb(236, 239, 238); font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; color: rgb(138, 153, 161); font-weight: 600;">
+            <span data-dc-tpl="281"></span><span data-dc-tpl="282"><span class="sc-interp">Alerte</span></span><span data-dc-tpl="283"><span class="sc-interp">Région</span></span><span data-dc-tpl="284"><span class="sc-interp">Incidence / seuil</span></span><span data-dc-tpl="285"><span class="sc-interp">Statut</span></span><span data-dc-tpl="286" style="text-align: right;"><span class="sc-interp">Action</span></span>
+          </div>
+          
+            <div data-dc-tpl="288" style="display: grid; grid-template-columns: 30px 1.6fr 1fr 1.3fr 1fr 110px; gap: 12px; align-items: center; padding: 13px 16px; border-bottom: 1px solid rgb(238, 241, 240); border-left: 4px solid rgb(217, 130, 20);">
+              <span data-dc-tpl="289" style="width: 11px; height: 11px; border-radius: 50%; background: rgb(217, 130, 20);"></span>
+              <div data-dc-tpl="290" style="min-width: 0px;">
+                <div data-dc-tpl="291" style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;"><span class="sc-interp">Paludisme</span><span data-dc-tpl="292" style="font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 1px 7px; border-radius: 4px; background: rgb(251, 234, 208); color: rgb(217, 130, 20);"><span class="sc-interp">Modéré</span></span></div>
+                <div data-dc-tpl="293" style="font-size: 11px; color: rgb(138, 153, 161); margin-top: 2px; font-family: &quot;IBM Plex Mono&quot;, monospace;"><span class="sc-interp">ALR-2614</span> · <span class="sc-interp">Générée automatiquement</span></div>
+              </div>
+              <div data-dc-tpl="294" style="font-size: 13px; font-weight: 500;"><span class="sc-interp">Kédougou</span></div>
+              <div data-dc-tpl="295">
+                <div data-dc-tpl="296" style="font-size: 12.5px; font-family: &quot;IBM Plex Mono&quot;, monospace;"><span data-dc-tpl="297" style="font-weight: 600; color: rgb(217, 130, 20);"><span class="sc-interp">135.1</span></span> / <span class="sc-interp">100</span> · +<span class="sc-interp">35</span>%</div>
+                <div data-dc-tpl="298" style="height: 5px; background: rgb(238, 241, 240); border-radius: 3px; overflow: hidden; margin-top: 5px; max-width: 150px;"><div data-dc-tpl="299" style="height: 100%; width: 54%; background: rgb(217, 130, 20); border-radius: 3px;"></div></div>
+              </div>
+              <div data-dc-tpl="300"><span data-dc-tpl="301" style="font-size: 11.5px; font-weight: 600; padding: 4px 10px; border-radius: 5px; background: rgb(246, 218, 211); color: rgb(180, 58, 36);"><span class="sc-interp">Active</span></span><div data-dc-tpl="302" style="font-size: 10.5px; color: rgb(160, 173, 179); margin-top: 4px; font-family: &quot;IBM Plex Mono&quot;, monospace;"><span class="sc-interp">il y a 7h</span></div></div>
+              <div data-dc-tpl="303" style="text-align: right;">
+                
+                  <button data-dc-tpl="305" class="scp1" style="padding: 7px 12px; background: rgb(14, 44, 73); color: rgb(234, 242, 251); border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; border-radius: 5px; font-family: &quot;IBM Plex Sans&quot;; font-size: 11.5px; font-weight: 600; cursor: pointer;"><span class="sc-interp">Prendre en charge</span></button>
+                
+              </div>
+            </div>
+          
+            <div data-dc-tpl="288" style="display: grid; grid-template-columns: 30px 1.6fr 1fr 1.3fr 1fr 110px; gap: 12px; align-items: center; padding: 13px 16px; border-bottom: 1px solid rgb(238, 241, 240); border-left: 4px solid rgb(217, 130, 20);">
+              <span data-dc-tpl="289" style="width: 11px; height: 11px; border-radius: 50%; background: rgb(217, 130, 20);"></span>
+              <div data-dc-tpl="290" style="min-width: 0px;">
+                <div data-dc-tpl="291" style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;"><span class="sc-interp">Paludisme</span><span data-dc-tpl="292" style="font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 1px 7px; border-radius: 4px; background: rgb(251, 234, 208); color: rgb(217, 130, 20);"><span class="sc-interp">Modéré</span></span></div>
+                <div data-dc-tpl="293" style="font-size: 11px; color: rgb(138, 153, 161); margin-top: 2px; font-family: &quot;IBM Plex Mono&quot;, monospace;"><span class="sc-interp">ALR-2615</span> · <span class="sc-interp">Générée automatiquement</span></div>
+              </div>
+              <div data-dc-tpl="294" style="font-size: 13px; font-weight: 500;"><span class="sc-interp">Tambacounda</span></div>
+              <div data-dc-tpl="295">
+                <div data-dc-tpl="296" style="font-size: 12.5px; font-family: &quot;IBM Plex Mono&quot;, monospace;"><span data-dc-tpl="297" style="font-weight: 600; color: rgb(217, 130, 20);"><span class="sc-interp">124.8</span></span> / <span class="sc-interp">100</span> · +<span class="sc-interp">25</span>%</div>
+                <div data-dc-tpl="298" style="height: 5px; background: rgb(238, 241, 240); border-radius: 3px; overflow: hidden; margin-top: 5px; max-width: 150px;"><div data-dc-tpl="299" style="height: 100%; width: 50%; background: rgb(217, 130, 20); border-radius: 3px;"></div></div>
+              </div>
+              <div data-dc-tpl="300"><span data-dc-tpl="301" style="font-size: 11.5px; font-weight: 600; padding: 4px 10px; border-radius: 5px; background: rgb(246, 218, 211); color: rgb(180, 58, 36);"><span class="sc-interp">Active</span></span><div data-dc-tpl="302" style="font-size: 10.5px; color: rgb(160, 173, 179); margin-top: 4px; font-family: &quot;IBM Plex Mono&quot;, monospace;"><span class="sc-interp">il y a 36h</span></div></div>
+              <div data-dc-tpl="303" style="text-align: right;">
+                
+                  <button data-dc-tpl="305" class="scp1" style="padding: 7px 12px; background: rgb(14, 44, 73); color: rgb(234, 242, 251); border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; border-radius: 5px; font-family: &quot;IBM Plex Sans&quot;; font-size: 11.5px; font-weight: 600; cursor: pointer;"><span class="sc-interp">Prendre en charge</span></button>
+                
+              </div>
+            </div>
+          
+            <div data-dc-tpl="288" style="display: grid; grid-template-columns: 30px 1.6fr 1fr 1.3fr 1fr 110px; gap: 12px; align-items: center; padding: 13px 16px; border-bottom: 1px solid rgb(238, 241, 240); border-left: 4px solid rgb(217, 130, 20);">
+              <span data-dc-tpl="289" style="width: 11px; height: 11px; border-radius: 50%; background: rgb(217, 130, 20);"></span>
+              <div data-dc-tpl="290" style="min-width: 0px;">
+                <div data-dc-tpl="291" style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;"><span class="sc-interp">Choléra</span><span data-dc-tpl="292" style="font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 1px 7px; border-radius: 4px; background: rgb(251, 234, 208); color: rgb(217, 130, 20);"><span class="sc-interp">Modéré</span></span></div>
+                <div data-dc-tpl="293" style="font-size: 11px; color: rgb(138, 153, 161); margin-top: 2px; font-family: &quot;IBM Plex Mono&quot;, monospace;"><span class="sc-interp">ALR-2616</span> · <span class="sc-interp">Générée automatiquement</span></div>
+              </div>
+              <div data-dc-tpl="294" style="font-size: 13px; font-weight: 500;"><span class="sc-interp">Saint-Louis</span></div>
+              <div data-dc-tpl="295">
+                <div data-dc-tpl="296" style="font-size: 12.5px; font-family: &quot;IBM Plex Mono&quot;, monospace;"><span data-dc-tpl="297" style="font-weight: 600; color: rgb(217, 130, 20);"><span class="sc-interp">6</span></span> / <span class="sc-interp">5</span> · +<span class="sc-interp">19</span>%</div>
+                <div data-dc-tpl="298" style="height: 5px; background: rgb(238, 241, 240); border-radius: 3px; overflow: hidden; margin-top: 5px; max-width: 150px;"><div data-dc-tpl="299" style="height: 100%; width: 48%; background: rgb(217, 130, 20); border-radius: 3px;"></div></div>
+              </div>
+              <div data-dc-tpl="300"><span data-dc-tpl="301" style="font-size: 11.5px; font-weight: 600; padding: 4px 10px; border-radius: 5px; background: rgb(250, 241, 214); color: rgb(201, 154, 30);"><span class="sc-interp">En charge</span></span><div data-dc-tpl="302" style="font-size: 10.5px; color: rgb(160, 173, 179); margin-top: 4px; font-family: &quot;IBM Plex Mono&quot;, monospace;"><span class="sc-interp">il y a 11h</span></div></div>
+              <div data-dc-tpl="303" style="text-align: right;">
+                
+              </div>
+            </div>
+          
+            <div data-dc-tpl="288" style="display: grid; grid-template-columns: 30px 1.6fr 1fr 1.3fr 1fr 110px; gap: 12px; align-items: center; padding: 13px 16px; border-bottom: 1px solid rgb(238, 241, 240); border-left: 4px solid rgb(217, 130, 20);">
+              <span data-dc-tpl="289" style="width: 11px; height: 11px; border-radius: 50%; background: rgb(217, 130, 20);"></span>
+              <div data-dc-tpl="290" style="min-width: 0px;">
+                <div data-dc-tpl="291" style="font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;"><span class="sc-interp">Paludisme</span><span data-dc-tpl="292" style="font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 1px 7px; border-radius: 4px; background: rgb(251, 234, 208); color: rgb(217, 130, 20);"><span class="sc-interp">Modéré</span></span></div>
+                <div data-dc-tpl="293" style="font-size: 11px; color: rgb(138, 153, 161); margin-top: 2px; font-family: &quot;IBM Plex Mono&quot;, monospace;"><span class="sc-interp">ALR-2617</span> · <span class="sc-interp">Générée automatiquement</span></div>
+              </div>
+              <div data-dc-tpl="294" style="font-size: 13px; font-weight: 500;"><span class="sc-interp">Kolda</span></div>
+              <div data-dc-tpl="295">
+                <div data-dc-tpl="296" style="font-size: 12.5px; font-family: &quot;IBM Plex Mono&quot;, monospace;"><span data-dc-tpl="297" style="font-weight: 600; color: rgb(217, 130, 20);"><span class="sc-interp">112</span></span> / <span class="sc-interp">100</span> · +<span class="sc-interp">12</span>%</div>
+                <div data-dc-tpl="298" style="height: 5px; background: rgb(238, 241, 240); border-radius: 3px; overflow: hidden; margin-top: 5px; max-width: 150px;"><div data-dc-tpl="299" style="height: 100%; width: 45%; background: rgb(217, 130, 20); border-radius: 3px;"></div></div>
+              </div>
+              <div data-dc-tpl="300"><span data-dc-tpl="301" style="font-size: 11.5px; font-weight: 600; padding: 4px 10px; border-radius: 5px; background: rgb(246, 218, 211); color: rgb(180, 58, 36);"><span class="sc-interp">Active</span></span><div data-dc-tpl="302" style="font-size: 10.5px; color: rgb(160, 173, 179); margin-top: 4px; font-family: &quot;IBM Plex Mono&quot;, monospace;"><span class="sc-interp">il y a 4h</span></div></div>
+              <div data-dc-tpl="303" style="text-align: right;">
+                
+                  <button data-dc-tpl="305" class="scp1" style="padding: 7px 12px; background: rgb(14, 44, 73); color: rgb(234, 242, 251); border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; border-radius: 5px; font-family: &quot;IBM Plex Sans&quot;; font-size: 11.5px; font-weight: 600; cursor: pointer;"><span class="sc-interp">Prendre en charge</span></button>
+                
+              </div>
+            </div>
+          
+        </div>
+      </div>
+      
+
+      
+      
+
+      
+      
+
+      
+
+    </main>
+  </div></div></div></div>
+
+
+
+</body></html>

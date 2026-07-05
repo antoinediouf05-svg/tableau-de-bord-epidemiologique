@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block title %}Déclaration de cas — Surveillance Épidémiologique{% endblock %}
+
+{% block content %}
+<div class="page" style="max-width:880px">
+
+  <div class="page-head">
+    <div>
+      <div class="kicker">Déclaration</div>
+      <h1>Déclaration de cas</h1>
+      <div class="page-sub">Notification d'un nouveau cas ou foyer suspecté</div>
+    </div>
+  </div>
+
+  <form method="post" class="card">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="form-grid">
+
+      <div class="field">
+        <label for="{{ form.region.id_for_label }}">Région <span class="req">*</span></label>
+        {{ form.region }}{{ form.region.errors }}
+      </div>
+      <div class="field">
+        <label for="{{ form.district.id_for_label }}">Département <span class="req">*</span></label>
+        {{ form.district }}{{ form.district.errors }}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.commune.id_for_label }}">Commune</label>
+        {{ form.commune }}{{ form.commune.errors }}
+      </div>
+      <div class="field">
+        <label for="{{ form.structure.id_for_label }}">Centre de santé</label>
+        {{ form.structure }}{{ form.structure.errors }}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.maladie.id_for_label }}">Maladie <span class="req">*</span></label>
+        {{ form.maladie }}{{ form.maladie.errors }}
+      </div>
+      <div class="field">
+        <label for="{{ form.date_notification.id_for_label }}">Date de notification</label>
+        {{ form.date_notification }}{{ form.date_notification.errors }}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.nombre_cas.id_for_label }}">Nombre de cas <span class="req">*</span></label>
+        {{ form.nombre_cas }}{{ form.nombre_cas.errors }}
+      </div>
+      <div class="field">
+        <label for="{{ form.age.id_for_label }}">Âge (ans)</label>
+        {{ form.age }}{{ form.age.errors }}
+      </div>
+
+      <div class="field">
+        <label>Sexe</label>
+        <div class="segmented">
+          {% for radio in form.sexe %}<label class="seg">{{ radio.tag }}{{ radio.choice_label }}</label>{% endfor %}
+        </div>
+      </div>
+      <div class="field">
+        <label>Statut du cas</label>
+        <div class="segmented">
+          {% for radio in form.statut %}<label class="seg">{{ radio.tag }}{{ radio.choice_label }}</label>{% endfor %}
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Gravité <span class="req">*</span></label>
+        <div class="segmented">
+          {% for radio in form.gravite %}<label class="seg">{{ radio.tag }}{{ radio.choice_label }}</label>{% endfor %}
+        </div>
+      </div>
+      <div class="field">
+        <label>Évolution <span class="req">*</span></label>
+        <div class="segmented">
+          {% for radio in form.evolution %}<label class="seg">{{ radio.tag }}{{ radio.choice_label }}</label>{% endfor %}
+        </div>
+      </div>
+
+      <div class="field full">
+        <label for="{{ form.observations.id_for_label }}">Observations cliniques</label>
+        {{ form.observations }}{{ form.observations.errors }}
+      </div>
+
+      <div class="form-actions">
+        <span style="font-size:11.5px;color:var(--muted)"><span class="req">*</span> Champs requis</span>
+        <div style="display:flex;gap:10px">
+          <button type="reset" class="btn btn-ghost">Réinitialiser</button>
+          <button type="submit" class="btn btn-primary">Soumettre la déclaration</button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+</div>
+
+{{ districts_par_region|json_script:"dpr" }}
+{{ communes_par_district|json_script:"cpd" }}
+{{ structures_par_commune|json_script:"spc" }}
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  // Cascade géographique : Région → Département → Commune → Centre de santé
+  var dpr = JSON.parse(document.getElementById('dpr').textContent);
+  var cpd = JSON.parse(document.getElementById('cpd').textContent);
+  var spc = JSON.parse(document.getElementById('spc').textContent);
+
+  var region    = document.getElementById('id_region');
+  var dept       = document.getElementById('id_district');
+  var commune   = document.getElementById('id_commune');
+  var structure = document.getElementById('id_structure');
+
+  function remplir(select, liste, keep) {
+    if (!select) return;
+    select.innerHTML = '<option value="">Sélectionner…</option>';
+    (liste || []).forEach(function (x) {
+      var o = document.createElement('option');
+      o.value = x.id; o.textContent = x.nom;
+      if (String(x.id) === String(keep)) o.selected = true;
+      select.appendChild(o);
+    });
+  }
+
+  function majDept(keep)    { remplir(dept, dpr[region.value], keep); }
+  function majCommune(keep) { remplir(commune, cpd[dept.value], keep); }
+  function majCentre(keep)  { remplir(structure, spc[commune.value], keep); }
+
+  if (region && dept) {
+    region.addEventListener('change', function () { majDept(); majCommune(); majCentre(); });
+    dept.addEventListener('change', function () { majCommune(); majCentre(); });
+    if (commune) commune.addEventListener('change', function () { majCentre(); });
+    // Initialisation (conserve les valeurs en cas de ré-affichage après erreur)
+    majDept(dept.value);
+    if (commune) majCommune(commune.value);
+    if (structure) majCentre(structure.value);
+  }
+})();
+</script>
+{% endblock %}

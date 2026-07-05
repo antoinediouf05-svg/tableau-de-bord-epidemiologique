@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Sanitrax{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Spectral:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'IBM Plex Sans',system-ui,sans-serif;color:#102C49;background:#EDF1F6;
+      min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .card{width:100%;max-width:430px;background:#fff;border:1px solid #E2E9F1;border-radius:14px;
+      padding:34px 36px;box-shadow:0 18px 48px rgba(16,44,73,.10)}
+    .brand{font-family:'Spectral',serif;font-size:24px;font-weight:700;color:#0E2C49}
+    .brand small{display:block;font-family:'IBM Plex Sans';font-size:10.5px;letter-spacing:1.4px;
+      text-transform:uppercase;color:#1763C6;font-weight:600;margin-top:4px}
+    h1{font-family:'Spectral',serif;font-size:21px;font-weight:600;margin:22px 0 8px}
+    p.sub{font-size:13px;color:#5A7088;line-height:1.55;margin-bottom:20px}
+    label{display:block;font-size:12px;font-weight:600;color:#3D5872;margin:14px 0 6px}
+    input[type=email],input[type=password],input[type=text]{width:100%;height:44px;padding:0 13px;
+      border:1px solid #DCE6F0;border-radius:9px;font-family:inherit;font-size:14px;background:#F8FBFE;outline:none}
+    input:focus{border-color:#1763C6;box-shadow:0 0 0 3px rgba(23,99,198,.12)}
+    .btn{width:100%;height:48px;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;
+      color:#fff;cursor:pointer;background:linear-gradient(100deg,#1763C6,#2BA34C);box-shadow:0 8px 22px rgba(23,99,198,.25);margin-top:22px}
+    .back{display:inline-block;margin-top:20px;font-size:12.5px;color:#1763C6;font-weight:600;text-decoration:none}
+    .errorlist{list-style:none;color:#C0392B;font-size:12px;margin-top:6px}
+    .help{font-size:11.5px;color:#7388A0;line-height:1.5;margin-top:6px}
+    .ok{padding:12px 14px;background:#E7F4EC;border:1px solid #BfE4CC;border-radius:9px;font-size:13px;color:#1c7a44;line-height:1.55}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="brand">Sanitrax<small>Surveillance épidémiologique</small></div>
+    {% block content %}{% endblock %}
+    <a class="back" href="{% url 'connexion' %}">← Retour à la connexion</a>
+  </div>
+</body>
+</html>

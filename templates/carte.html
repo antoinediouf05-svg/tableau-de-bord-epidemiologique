@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Carte & heatmap — Surveillance Épidémiologique{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+{% endblock %}
+
+{% block content %}
+<div class="page">
+
+  <div class="page-head">
+    <div>
+      <div class="kicker">Carte & heatmap</div>
+      <h1>Carte &amp; heatmap interactive</h1>
+      <div class="page-sub">Distribution spatiale de l'incidence par région · {{ maladie.nom }}</div>
+    </div>
+    <div class="disease-chips">
+      <span class="lbl">Maladie :</span>
+      {% for m in maladies %}
+        <a class="chip {% if m.code == maladie.code %}active{% endif %}" href="?maladie={{ m.code }}">
+          <span class="swatch" style="background:{{ m.couleur }}"></span>{{ m.nom }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="grid cols-2-1">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div class="card-title">Carte d'incidence régionale</div>
+        <div class="legend">
+          {% for n in legende %}<div class="it"><span class="sw" style="background:{{ n.fill }}"></span>{{ n.label }}</div>{% endfor %}
+        </div>
+      </div>
+      <div id="map-full" class="mapbox" style="height:560px"></div>
+      {{ carte_data|json_script:"carte-full" }}
+    </div>
+
+    <div class="card">
+      <div class="card-title">Classement régional</div>
+      <div class="card-sub" style="margin-bottom:10px">Incidence / 100 000 hab. · seuil {{ maladie.seuil_incidence }}</div>
+      {% for l in lignes %}
+      <a class="rank-row" href="{% url 'home' %}?maladie={{ maladie.code }}&region={{ l.region.code }}">
+        <span class="rank-no">{{ l.rang }}</span>
+        <div class="rank-main">
+          <div class="rank-name">
+            <span><span class="sev-dot" style="display:inline-block;width:8px;height:8px;background:{{ l.fill }};margin-right:6px"></span>{{ l.region.nom }}</span>
+            <span class="mono">{{ l.incidence }}</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:{{ l.pct }}%;background:{{ l.fill }}"></div></div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{% static 'js/sanitrax-map.js' %}"></script>
+<script>initCarteSN('map-full', 'carte-full');</script>
+{% endblock %}

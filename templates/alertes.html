@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Centre d'alertes — Surveillance Épidémiologique{% endblock %}
+
+{% block content %}
+<div class="page">
+
+  <div class="page-head">
+    <div>
+      <div class="kicker">Centre d'alertes</div>
+      <h1>Centre d'alertes automatiques</h1>
+      <div class="page-sub">Règles : incidence hebdomadaire ≥ seuil épidémique, ou ≥ 30 cas en 24h</div>
+    </div>
+  </div>
+
+  <div class="filters">
+    {% for f in filtres %}
+    <a class="filter {% if f.id == statut_actif %}active{% endif %}" href="?statut={{ f.id }}">
+      {{ f.label }} <span class="c">{{ f.count }}</span>
+    </a>
+    {% endfor %}
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="alert-tbl">
+      <div class="head">
+        <span>Alerte</span><span>Région</span><span>Incidence / seuil</span><span>Statut</span><span>Action</span>
+      </div>
+      {% for row in rows %}
+      <div class="row" style="border-left-color:{{ row.meta.color }}">
+        <div>
+          <div class="alert-id">ALR-{{ row.a.pk }}</div>
+          <div style="font-weight:600;font-size:13px">{{ row.a.maladie.nom }}</div>
+          <div style="font-size:11px;color:var(--muted2)">{{ row.a.get_declencheur_display }}{% if row.a.pic_24h >= 30 %} · pic {{ row.a.pic_24h }} cas/24h{% endif %} · il y a {{ row.a.date_detection|timesince }}</div>
+        </div>
+        <div style="font-size:13px">{{ row.a.region.nom }}</div>
+        <div>
+          <div class="mono" style="font-size:12.5px"><b style="color:{{ row.meta.color }}">{{ row.a.incidence }}</b> / {{ row.a.seuil }}
+            <span style="color:var(--muted2)">· +{{ row.a.depassement }}%</span></div>
+          <div class="bar-track" style="margin-top:6px"><div class="bar-fill" style="width:{{ row.bar }}%;background:{{ row.meta.fill }}"></div></div>
+        </div>
+        <div><span class="sev-pill" style="background:{{ row.st_fond }};color:{{ row.st_couleur }}">{{ row.a.get_statut_display }}</span></div>
+        <div>
+          {% if row.a.statut == 'active' and user_role != 'agent' %}
+          <form method="post" action="{% url 'prendre_en_charge' row.a.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-primary" style="padding:7px 12px;font-size:12px">Prendre en charge</button>
+          </form>
+          {% else %}
+          <span style="color:var(--muted2);font-size:18px">✓</span>
+          {% endif %}
+        </div>
+      </div>
+      {% empty %}
+      <div style="padding:30px;text-align:center;color:var(--muted)">Aucune alerte pour ce filtre.</div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

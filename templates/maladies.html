@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}{{ maladie.nom }} — Surveillance Épidémiologique{% endblock %}
+
+{% block content %}
+<div class="page">
+
+  <div class="page-head">
+    <div>
+      <div class="kicker">Analyse de maladie</div>
+      <h1><span style="display:inline-block;width:14px;height:14px;border-radius:4px;background:{{ maladie.couleur }};vertical-align:middle;margin-right:8px"></span>{{ maladie.nom }}</h1>
+      <div class="page-sub">Profil épidémiologique · semaine {{ epi_semaine }}</div>
+    </div>
+    <div class="disease-chips">
+      <span class="lbl">Maladie :</span>
+      {% for m in maladies %}
+        <a class="chip {% if m.code == maladie.code %}active{% endif %}" href="?maladie={{ m.code }}">
+          <span class="swatch" style="background:{{ m.couleur }}"></span>{{ m.nom }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Indicateurs clés -->
+  <div class="grid kpi-row" style="margin-bottom:16px">
+    {% for f in figures %}
+    <div class="card">
+      <div class="k-label">{{ f.label }}</div>
+      <div class="mono" style="font-size:24px;font-weight:600;margin-top:6px;color:#102C49">{{ f.value }}</div>
+      <div style="font-size:11.5px;font-weight:600;margin-top:4px;color:{{ f.sub_couleur }}">{{ f.sub }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Courbe + démographie -->
+  <div class="grid cols-2-1" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-title">Évolution nationale</div>
+      <div class="card-sub" style="margin-bottom:8px">16 dernières semaines</div>
+      <svg viewBox="0 0 {{ courbe.largeur }} {{ courbe.hauteur }}" style="width:100%;height:auto">
+        {% for t in courbe.yticks %}
+          <line x1="44" y1="{{ t.y }}" x2="{{ courbe.largeur }}" y2="{{ t.y }}" stroke="#EEF2F6"></line>
+          <text x="38" y="{{ t.y|add:3 }}" text-anchor="end" font-size="9" fill="#9AA9B4" font-family="IBM Plex Mono">{{ t.v }}</text>
+        {% endfor %}
+        <path d="{{ courbe.area }}" fill="{{ maladie.couleur }}" fill-opacity="0.13"></path>
+        <path d="{{ courbe.line }}" fill="none" stroke="{{ maladie.couleur }}" stroke-width="2.5"></path>
+        {% for px, py in courbe.points %}<circle cx="{{ px }}" cy="{{ py }}" r="2" fill="{{ maladie.couleur }}"></circle>{% endfor %}
+        {% for t in courbe.xticks %}<text x="{{ t.x }}" y="{{ courbe.hauteur }}" text-anchor="middle" font-size="9" fill="#9AA9B4" font-family="IBM Plex Mono">{{ t.label }}</text>{% endfor %}
+      </svg>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Démographie</div>
+      <div class="card-sub" style="margin-bottom:14px">Répartition des cas</div>
+
+      <div style="font-size:11.5px;font-weight:600;color:var(--muted);margin-bottom:8px">Par tranche d'âge</div>
+      <div style="display:flex;align-items:flex-end;gap:10px;height:110px">
+        {% for t in demographie.tranches %}
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">
+          <div style="font-size:10px;color:var(--muted2);font-family:'IBM Plex Mono'">{{ t.pct }}%</div>
+          <div style="width:100%;border-radius:4px 4px 0 0;background:{{ maladie.couleur }};height:{{ t.hauteur }}%;min-height:2px;margin-top:4px"></div>
+          <div style="font-size:10px;color:var(--muted);margin-top:5px">{{ t.label }}</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div style="font-size:11.5px;font-weight:600;color:var(--muted);margin:16px 0 8px">Par sexe</div>
+      <div style="display:flex;height:30px;border-radius:6px;overflow:hidden;font-size:11px;font-weight:700;color:#fff">
+        <div style="width:{{ demographie.sexe_m }}%;background:#1763C6;display:flex;align-items:center;justify-content:center">{{ demographie.sexe_m }}%</div>
+        <div style="width:{{ demographie.sexe_f }}%;background:#C6862A;display:flex;align-items:center;justify-content:center">{{ demographie.sexe_f }}%</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px">
+        <span>Masculin</span><span>Féminin</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Répartition régionale -->
+  <div class="card">
+    <div class="card-title">Répartition régionale</div>
+    <div class="card-sub" style="margin-bottom:10px">Incidence / 100 000 hab.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 28px">
+      {% for l in repartition %}
+      <div class="rank-row" style="cursor:default">
+        <div class="rank-main">
+          <div class="rank-name">
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:{{ l.fill }};margin-right:6px"></span>{{ l.region.nom }}</span>
+            <span class="mono">{{ l.incidence }} · {{ l.cases }} cas</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:{{ l.pct }}%;background:{{ l.fill }}"></div></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

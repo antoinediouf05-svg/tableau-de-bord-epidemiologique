@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Surveillance Épidémiologique{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Spectral:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/sanitrax.css' %}?v=1">
+  {% block head %}{% endblock %}
+</head>
+<body>
+{% url 'home' as url_home %}
+<div class="app">
+
+  <!-- ============ BARRE DU HAUT ============ -->
+  <header class="topbar">
+    <a href="{{ url_home }}" style="display:flex;align-items:center;gap:12px">
+      <span class="wordmark">Sanitrax</span>
+    </a>
+    <span class="sep"></span>
+    <div class="ministry">MSAS · République du Sénégal</div>
+    <div class="spacer"></div>
+
+    <div class="epiweek">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7388A0" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M3 9h18M8 2v4M16 2v4"></path></svg>
+      <span>Semaine épi.</span>
+      <span class="mono" style="font-weight:600;color:#102C49">{{ epi_semaine }}</span>
+      <span class="sep" style="height:14px;margin:0 3px"></span>
+      <span class="dot-live"></span>
+      <span style="color:#21925B;font-weight:600">En ligne</span>
+    </div>
+
+    <a href="{% url 'alertes' %}" class="icon-btn" aria-label="Centre d'alertes">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10 21a2 2 0 0 0 4 0"></path></svg>
+      {% if nav_alertes_actives %}<span class="badge-count">{{ nav_alertes_actives }}</span>{% endif %}
+    </a>
+
+    <div style="display:flex;align-items:center;gap:10px;padding-left:4px">
+      <div class="avatar">{{ user_initiales|default:'?' }}</div>
+      <div style="line-height:1.15">
+        <div style="font-size:12.5px;font-weight:600">{{ request.user.get_full_name|default:request.user.username }}</div>
+        <div style="font-size:10.5px;color:#7388A0">{{ user_role_label }}</div>
+      </div>
+      <a href="{% url 'deconnexion' %}" class="icon-btn" title="Se déconnecter" style="width:36px;height:36px;margin-left:4px">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"></path></svg>
+      </a>
+    </div>
+  </header>
+
+  <div class="shell">
+
+    <!-- ============ SIDEBAR ============ -->
+    <nav class="sidebar">
+      <div class="section">Navigation</div>
+      {% with u=request.resolver_match.url_name %}
+      <a class="nav-item {% if u == 'home' %}active{% endif %}" href="{% url 'home' %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"></path></svg>
+        <span class="label">Vue d'ensemble</span>
+      </a>
+      <a class="nav-item {% if u == 'carte' %}active{% endif %}" href="{% url 'carte' %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 3 3 5v16l6-2 6 2 6-2V3l-6 2-6-2zM9 3v16M15 5v16"></path></svg>
+        <span class="label">Carte &amp; heatmap</span>
+      </a>
+      <a class="nav-item {% if u == 'maladies' %}active{% endif %}" href="{% url 'maladies' %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 12h4l3 8 4-16 3 8h4"></path></svg>
+        <span class="label">Maladies</span>
+      </a>
+      <a class="nav-item {% if u == 'alertes' %}active{% endif %}" href="{% url 'alertes' %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10 21a2 2 0 0 0 4 0"></path></svg>
+        <span class="label">Centre d'alertes</span>
+        {% if nav_alertes_actives %}<span class="pill">{{ nav_alertes_actives }}</span>{% endif %}
+      </a>
+      {% if peut_declarer %}
+      <a class="nav-item {% if u == 'declaration' %}active{% endif %}" href="{% url 'declaration' %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M12 12v6M9 15h6"></path></svg>
+        <span class="label">Déclaration</span>
+      </a>
+      {% endif %}
+      <a class="nav-item {% if u == 'rapports' %}active{% endif %}" href="{% url 'rapports' %}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"></path></svg>
+        <span class="label">Rapports</span>
+      </a>
+      {% endwith %}
+
+      <div class="spacer"></div>
+      <div class="sys-health">
+        <div class="h"><span class="dot-live"></span>État du réseau</div>
+        <div class="row"><span>Départements actifs</span><span class="v">{{ nb_districts }} / {{ nb_districts }}</span></div>
+        <div class="row"><span>Complétude</span><span class="v">96,2 %</span></div>
+      </div>
+      <div class="foot">SNSE · v2.4 — Données simulées à des fins de démonstration.</div>
+    </nav>
+
+    <!-- ============ ZONE PRINCIPALE ============ -->
+    <main class="main scrl">
+      {% if messages %}
+        <div class="page" style="padding-bottom:0">
+          <div class="messages">
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% block scripts %}{% endblock %}
+</body>
+</html>

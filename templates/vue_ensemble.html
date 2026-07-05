@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Vue d'ensemble — Surveillance Épidémiologique{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+{% endblock %}
+
+{% block content %}
+<div class="page">
+
+  <div class="page-head">
+    <div>
+      <div class="kicker">Vue d'ensemble nationale</div>
+      <h1>Tableau de bord épidémiologique</h1>
+      <div class="page-sub">14 régions · {{ nb_districts }} départements ·
+        <span class="mono" style="color:#102C49">{{ maj_label }}</span></div>
+    </div>
+    <div class="disease-chips">
+      <span class="lbl">Maladie :</span>
+      {% for m in maladies %}
+        <a class="chip {% if m.code == maladie.code %}active{% endif %}" href="?maladie={{ m.code }}">
+          <span class="swatch" style="background:{{ m.couleur }}"></span>{{ m.nom }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- KPI nationaux (toutes maladies, cumul) -->
+  <div class="grid kpi-row" style="margin-bottom:14px">
+    {% for k in kpis %}
+    <div class="kpi">
+      <span class="bar" style="background:{{ k.bar }}"></span>
+      <div class="k-label">{{ k.label }}</div>
+      <div class="k-value">{{ k.value }}<span class="k-unit">{{ k.unit }}</span></div>
+      <div class="k-delta" style="color:{{ k.delta_couleur }}">
+        {% if k.up %}↑{% else %}↓{% endif %} {{ k.delta }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Faits marquants : maladie dominante + région la plus touchée -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+    <div class="card" style="display:flex;align-items:center;gap:13px">
+      <span style="width:9px;height:42px;border-radius:5px;background:{{ tb.maladie_dominante_couleur }}"></span>
+      <div>
+        <div class="k-label">Maladie dominante</div>
+        <div style="font-size:20px;font-weight:700;color:#102C49">{{ tb.maladie_dominante }}</div>
+        <div class="card-sub">{{ tb.maladie_dominante_cas }} cas cumulés (tous pathogènes confondus)</div>
+      </div>
+    </div>
+    <div class="card" style="display:flex;align-items:center;gap:13px">
+      <span style="width:9px;height:42px;border-radius:5px;background:#6E5AA8"></span>
+      <div>
+        <div class="k-label">Région la plus touchée</div>
+        <div style="font-size:20px;font-weight:700;color:#102C49">{{ tb.region_plus_touchee }}</div>
+        <div class="card-sub">{{ tb.region_plus_touchee_cas }} cas cumulés</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carte + panneau région -->
+  <div class="grid cols-2-1" style="margin-bottom:16px">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div>
+          <div class="card-title">Carte d'incidence régionale</div>
+          <div class="card-sub">{{ maladie.nom }} · incidence / 100 000 hab.</div>
+        </div>
+        <div class="legend">
+          <div class="it"><span class="sw" style="background:#BCC9D8"></span>Surv.</div>
+          <div class="it"><span class="sw" style="background:#F2D481"></span>Faible</div>
+          <div class="it"><span class="sw" style="background:#ECB24C"></span>Modéré</div>
+          <div class="it"><span class="sw" style="background:#DD7B2E"></span>Élevé</div>
+          <div class="it"><span class="sw" style="background:#C0392B"></span>Critique</div>
+        </div>
+      </div>
+      <div id="map-ov" class="mapbox"></div>
+      {{ carte_data|json_script:"carte-ov" }}
+    </div>
+
+    <div>
+      <div class="card region-panel" style="margin-bottom:16px">
+        <div class="kicker" style="margin-bottom:2px">Région sélectionnée</div>
+        <div class="card-title">{{ ligne_sel.region.nom }}</div>
+        <div class="big">
+          <div class="stat"><div class="l">Cas</div><div class="v">{{ ligne_sel.cases }}</div></div>
+          <div class="stat"><div class="l">Inc. /100k</div><div class="v">{{ ligne_sel.incidence }}</div></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);border-top:1px solid var(--line2);padding-top:9px">
+          <span>Population</span><span class="mono" style="color:#102C49">{{ ligne_sel.region.population }}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:5px">
+          <span>Part nationale</span><span class="mono" style="color:#102C49">{{ part_nationale }} %</span>
+        </div>
+        <div style="margin-top:11px">
+          <span class="sev-pill" style="background:{{ ligne_sel.bg }};color:{{ ligne_sel.color }}">{{ ligne_sel.label }}</span>
+          <a class="btn btn-primary" style="width:100%;justify-content:center;margin-top:11px"
+             href="{% url 'maladies' %}?maladie={{ maladie.code }}">Analyser cette maladie →</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div class="card-title" style="font-size:14px">Alertes récentes</div>
+          <a href="{% url 'alertes' %}" style="font-size:11.5px;color:var(--blue);font-weight:600">Tout voir →</a>
+        </div>
+        {% for a in alertes_recentes %}
+        <div class="alert-mini">
+          <div class="stripe" style="background:{{ a.maladie.couleur }}"></div>
+          <div style="flex:1">
+            <div class="d">{{ a.maladie.nom }} — {{ a.region.nom }}</div>
+            <div class="m">+{{ a.depassement }} % au-dessus du seuil ({{ a.incidence }} / {{ a.seuil }})</div>
+            <div class="a">il y a {{ a.date_detection|timesince }}</div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="card-sub">Aucune alerte active.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Courbe + table -->
+  <div class="grid cols-2-1">
+    <div class="card">
+      <div class="card-title">Courbe épidémiologique</div>
+      <div class="card-sub" style="margin-bottom:8px">16 dernières semaines · {{ maladie.nom }}</div>
+      <svg viewBox="0 0 {{ courbe.largeur }} {{ courbe.hauteur }}" style="width:100%;height:auto">
+        {% for t in courbe.yticks %}
+          <line x1="44" y1="{{ t.y }}" x2="{{ courbe.largeur }}" y2="{{ t.y }}" stroke="#EEF2F6"></line>
+          <text x="38" y="{{ t.y|add:3 }}" text-anchor="end" font-size="9" fill="#9AA9B4" font-family="IBM Plex Mono">{{ t.v }}</text>
+        {% endfor %}
+        <path d="{{ courbe.area }}" fill="{{ maladie.couleur }}" fill-opacity="0.13"></path>
+        <path d="{{ courbe.line }}" fill="none" stroke="{{ maladie.couleur }}" stroke-width="2.5"></path>
+        {% for px, py in courbe.points %}<circle cx="{{ px }}" cy="{{ py }}" r="2" fill="{{ maladie.couleur }}"></circle>{% endfor %}
+        {% for t in courbe.xticks %}
+          <text x="{{ t.x }}" y="{{ courbe.hauteur }}" text-anchor="middle" font-size="9" fill="#9AA9B4" font-family="IBM Plex Mono">{{ t.label }}</text>
+        {% endfor %}
+      </svg>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Agrégation régionale</div>
+      <div class="card-sub" style="margin-bottom:6px">Tri par incidence</div>
+      <div class="tbl">
+        <div class="head"><span>Région</span><span style="text-align:right">Cas</span><span style="text-align:right">Inc.</span><span style="text-align:right">Tend.</span></div>
+        {% for l in lignes %}
+        <a class="row {% if l.region.code == ligne_sel.region.code %}active{% endif %}"
+           href="?maladie={{ maladie.code }}&region={{ l.region.code }}">
+          <span class="name"><span class="sev-dot" style="background:{{ l.fill }}"></span>{{ l.region.nom }}</span>
+          <span class="num">{{ l.cases }}</span>
+          <span class="num">{{ l.incidence }}</span>
+          <span class="trend" style="color:{{ l.tendance_couleur }}">
+            {% if l.tendance > 0 %}↑{% elif l.tendance < 0 %}↓{% else %}→{% endif %}{{ l.tendance }}%
+          </span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Activités récentes -->
+  <div class="card" style="margin-top:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div>
+        <div class="card-title">Activités récentes</div>
+        <div class="card-sub">Dernières alertes déclenchées par le système</div>
+      </div>
+      <a href="{% url 'alertes' %}" style="font-size:11.5px;color:var(--blue);font-weight:600">Centre d'alertes →</a>
+    </div>
+    {% for a in activites %}
+    <div class="alert-mini">
+      <div class="stripe" style="background:{{ a.maladie.couleur }}"></div>
+      <div style="flex:1">
+        <div class="d">Alerte déclenchée · {{ a.maladie.nom }} — {{ a.region.nom }}</div>
+        <div class="m">{{ a.get_declencheur_display }} · niveau {{ a.get_niveau_display }}</div>
+      </div>
+      <div class="a" style="white-space:nowrap;color:var(--muted2);font-size:11px">il y a {{ a.date_detection|timesince }}</div>
+    </div>
+    {% empty %}
+    <div class="card-sub">Aucune activité récente.</div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{% static 'js/sanitrax-map.js' %}"></script>
+<script>initCarteSN('map-ov', 'carte-ov');</script>
+{% endblock %}

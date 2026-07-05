@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Rapports — Surveillance Épidémiologique{% endblock %}
+
+{% block content %}
+<div class="page" style="max-width:980px">
+
+  <div class="page-head">
+    <div>
+      <div class="kicker">Rapports</div>
+      <h1>Bulletin épidémiologique</h1>
+      <div class="page-sub">Agrégation nationale — toutes maladies × toutes régions · {{ debut|date:"d/m/Y" }} → {{ terme|date:"d/m/Y" }}</div>
+    </div>
+  </div>
+
+  <!-- Sélecteur de période -->
+  <div class="seg-tabs" style="display:inline-flex;gap:6px;margin-bottom:18px">
+    <a class="btn {% if periode == 'semaine' %}btn-primary{% else %}btn-ghost{% endif %}"
+       href="?periode=semaine">Hebdomadaire</a>
+    <a class="btn {% if periode == 'mois' %}btn-primary{% else %}btn-ghost{% endif %}"
+       href="?periode=mois">Mensuel</a>
+  </div>
+
+  <div class="report-grid">
+
+    <div class="report">
+      <div class="ic" style="background:#1763C6">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M8 13h8M8 17h5"></path></svg>
+      </div>
+      <div style="flex:1">
+        <div class="t">Bulletin {{ periode_label|lower }} <span class="tag">{{ periode_label }}</span></div>
+        <div class="desc">Synthèse multi-maladies par région (cas, incidence, niveau)</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+          <span class="meta">Période : {{ debut|date:"d/m/Y" }} → {{ terme|date:"d/m/Y" }}</span>
+          <div style="display:flex;gap:8px">
+            <a class="btn btn-accent" href="{% url 'export_excel' %}?periode={{ periode }}">Excel</a>
+            <a class="btn btn-primary" href="{% url 'export_pdf' %}?periode={{ periode }}">PDF</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="report">
+      <div class="ic" style="background:#C6862A">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h16v4H4zM4 10h16v4H4zM4 16h16v4H4z"></path></svg>
+      </div>
+      <div style="flex:1">
+        <div class="t">Données brutes <span class="tag">CSV</span></div>
+        <div class="desc">Export agrégé pour traitement externe (tableur / SITREP)</div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="meta">CSV · séparateur « ; »</span>
+          <a class="btn btn-ghost" href="{% url 'export_csv' %}?periode={{ periode }}">Télécharger</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

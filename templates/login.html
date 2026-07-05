@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion — Sanitrax</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Spectral:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'IBM Plex Sans',system-ui,sans-serif;color:#102C49}
+    .wrap{display:flex;min-height:100vh}
+    @keyframes dashFlow{to{stroke-dashoffset:-160}}
+    @keyframes mkPulse2{0%{transform:scale(1);opacity:.9}70%{transform:scale(2.6);opacity:0}100%{opacity:0}}
+    @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* hero */
+    .hero{flex:1;position:relative;overflow:hidden;background:linear-gradient(160deg,#0E2C49,#0A2138);
+      display:flex;flex-direction:column;justify-content:space-between;padding:46px 54px;color:#fff;min-width:0}
+    .brand{position:relative;display:flex;align-items:center;gap:13px}
+    .brand .mark{width:50px;height:50px;border-radius:13px;background:#fff;display:flex;align-items:center;justify-content:center;
+      box-shadow:0 8px 26px rgba(0,0,0,.28);animation:floatY 6s ease-in-out infinite}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 13px;border:1px solid rgba(127,166,208,.3);
+      border-radius:100px;font-size:11.5px;color:#9FC0E2;letter-spacing:.4px;margin-bottom:22px}
+    .stat-n{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:600;color:#fff}
+
+    /* panel */
+    .panel{flex:none;width:512px;background:#fff;display:flex;flex-direction:column;padding:40px 56px;overflow-y:auto}
+    .inner{max-width:400px;width:100%;margin:0 auto}
+    label.fld{display:block;font-size:12px;font-weight:600;color:#3D5872;margin-bottom:7px}
+    .inp{width:100%;height:46px;padding:0 14px 0 40px;border:1px solid #DCE6F0;border-radius:9px;
+      font-family:inherit;font-size:14px;color:#102C49;background:#F8FBFE;outline:none;transition:border-color .15s}
+    .inp:focus{border-color:#1763C6;box-shadow:0 0 0 3px rgba(23,99,198,.12)}
+    .icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);pointer-events:none}
+    .roles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .role{display:flex;align-items:center;gap:9px;padding:11px 12px;border-radius:9px;cursor:pointer;
+      font-size:12.5px;font-weight:600;border:1.5px solid #E2E9F1;background:#fff;color:#5A7088;font-family:inherit;text-align:left}
+    .role.active{border-color:#1763C6;background:#EFF5FC;color:#0E2C49}
+    .submit{width:100%;height:50px;border:none;border-radius:10px;font-family:inherit;font-size:14.5px;font-weight:600;
+      color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;
+      background:linear-gradient(100deg,#1763C6,#2BA34C);box-shadow:0 8px 22px rgba(23,99,198,.28)}
+    .link{font-size:11.5px;color:#1763C6;background:none;border:none;cursor:pointer;font-weight:600;text-decoration:none}
+    @media(max-width:900px){.hero{display:none}.panel{width:100%}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== HERO ===== -->
+  <div class="hero">
+    <svg viewBox="0 0 600 700" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%;opacity:.5;pointer-events:none">
+      <defs><linearGradient id="cv" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1763C6" stop-opacity="0"></stop><stop offset="1" stop-color="#2BCB6A" stop-opacity=".9"></stop></linearGradient></defs>
+      <path d="M-20 540 C 80 520, 130 470, 200 480 S 320 430, 380 360 S 500 250, 640 120" fill="none" stroke="url(#cv)" stroke-width="3" stroke-dasharray="6 10" style="animation:dashFlow 9s linear infinite"></path>
+      <path d="M-20 600 C 110 590, 160 560, 240 560 S 360 520, 430 470 S 560 360, 660 280" fill="none" stroke="#2D5A86" stroke-width="2" stroke-opacity=".6"></path>
+    </svg>
+    <div style="position:absolute;top:120px;right:70px;width:12px;height:12px;border-radius:50%;background:#2BCB6A;animation:mkPulse2 2.6s ease-out infinite"></div>
+    <div style="position:absolute;top:300px;right:160px;width:9px;height:9px;border-radius:50%;background:#E8B84B;animation:mkPulse2 3.1s ease-out .6s infinite"></div>
+    <div style="position:absolute;top:430px;right:90px;width:10px;height:10px;border-radius:50%;background:#D6452A;animation:mkPulse2 2.2s ease-out 1.1s infinite"></div>
+
+    <div class="brand">
+      <div class="mark">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1763C6" stroke-width="2.2"><path d="M3 12h4l3 8 4-16 3 8h4"></path></svg>
+      </div>
+      <div style="line-height:1">
+        <div style="font-family:Spectral,serif;font-size:26px;font-weight:700;letter-spacing:.2px">Sanitrax</div>
+        <div style="font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:#7FA6D0;margin-top:4px">Surveillance épidémiologique</div>
+      </div>
+    </div>
+
+    <div style="position:relative;max-width:440px">
+      <div class="badge"><span style="width:7px;height:7px;border-radius:50%;background:#2BCB6A;box-shadow:0 0 8px #2BCB6A"></span>Réseau national de surveillance — en ligne</div>
+      <h1 style="font-family:Spectral,serif;font-size:38px;line-height:1.18;font-weight:600;letter-spacing:-.4px">Détecter, suivre et anticiper les foyers épidémiques au Sénégal.</h1>
+      <p style="font-size:15px;line-height:1.65;color:#A9C3DD;margin-top:18px">Plateforme nationale de veille sanitaire : déclaration des cas, agrégation régionale, courbes épidémiologiques et alertes automatiques en temps réel.</p>
+      <div style="display:flex;gap:30px;margin-top:34px">
+        <div><div class="stat-n">14</div><div style="font-size:11.5px;color:#7FA6D0;margin-top:3px">Régions</div></div>
+        <div style="width:1px;background:rgba(127,166,208,.22)"></div>
+        <div><div class="stat-n">79</div><div style="font-size:11.5px;color:#7FA6D0;margin-top:3px">Districts</div></div>
+        <div style="width:1px;background:rgba(127,166,208,.22)"></div>
+        <div><div class="stat-n">6</div><div style="font-size:11.5px;color:#7FA6D0;margin-top:3px">Maladies suivies</div></div>
+      </div>
+    </div>
+
+    <div style="position:relative;font-size:11.5px;color:#5E7C9C;line-height:1.6">
+      Ministère de la Santé et de l'Action sociale — République du Sénégal<br>© 2026 Sanitrax · Système national d'épidémiosurveillance
+    </div>
+  </div>
+
+  <!-- ===== FORM ===== -->
+  <div class="panel">
+    <div style="margin-bottom:auto"></div>
+    <div class="inner">
+      <div style="margin-bottom:26px">
+        <div style="font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:#1763C6;font-weight:600;margin-bottom:10px">Espace sécurisé</div>
+        <h2 style="font-family:Spectral,serif;font-size:28px;font-weight:600;letter-spacing:-.3px">Connexion</h2>
+        <p style="font-size:13.5px;color:#5A7088;margin-top:8px;line-height:1.55">Authentifiez-vous pour accéder au tableau de bord correspondant à votre rôle.</p>
+      </div>
+
+      {% if error %}
+      <div style="display:flex;align-items:center;gap:9px;padding:11px 14px;background:#FDECE8;border:1px solid #F4C4B8;border-radius:8px;margin-bottom:18px">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5M12 16h.01"></path></svg>
+        <span style="font-size:12.5px;color:#A33223;font-weight:500">E-mail ou mot de passe incorrect.</span>
+      </div>
+      {% endif %}
+      {% for message in messages %}
+        <div style="padding:10px 14px;background:#E7F0FA;border:1px solid #C7DDF5;border-radius:8px;margin-bottom:14px;font-size:12.5px;color:#1763C6">{{ message }}</div>
+      {% endfor %}
+
+      <form method="post" action="{% url 'connexion' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
+        {% csrf_token %}
+
+        <div style="margin-bottom:16px">
+          <label class="fld">Adresse e-mail professionnelle</label>
+          <div style="position:relative">
+            <svg class="icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9DAEC0" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg>
+            <input id="email" class="inp" type="email" name="email" placeholder="prenom.nom@sante.gouv.sn" autocomplete="username" required>
+          </div>
+        </div>
+
+        <div style="margin-bottom:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+            <label class="fld" style="margin:0">Mot de passe</label>
+            <a class="link" href="{% url 'password_reset' %}">Mot de passe oublié ?</a>
+          </div>
+          <div style="position:relative">
+            <svg class="icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#9DAEC0" stroke-width="1.8"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+            <input id="password" class="inp" type="password" name="password" placeholder="Votre mot de passe" autocomplete="current-password" required style="padding-right:42px">
+            <button type="button" id="togglePwd" aria-label="Afficher le mot de passe" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:#7388A0;border-radius:6px">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+        </div>
+
+        <div style="margin-bottom:18px">
+          <label class="fld">Rôle <span style="font-weight:400;color:#9DAEC0">— démo : pré-remplit les identifiants</span></label>
+          <div class="roles">
+            <button type="button" class="role" data-email="admin@sante.gouv.sn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"></path></svg><span>Administrateur</span>
+            </button>
+            <button type="button" class="role" data-email="agent.thies@sante.gouv.sn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg><span>Agent régional</span>
+            </button>
+            <button type="button" class="role" data-email="epi@sante.gouv.sn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h4l3 8 4-16 3 8h4"></path></svg><span>Épidémiologiste</span>
+            </button>
+            <button type="button" class="role" data-email="decideur@sante.gouv.sn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"></path></svg><span>Décideur ministériel</span>
+            </button>
+          </div>
+        </div>
+
+        <label style="display:flex;align-items:center;gap:9px;margin-bottom:22px;cursor:pointer;font-size:12.5px;color:#5A7088">
+          <input type="checkbox" name="remember" checked style="width:16px;height:16px;accent-color:#1763C6"> Rester connecté sur cet appareil
+        </label>
+
+        <button type="submit" class="submit">Se connecter
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </button>
+      </form>
+
+      <div style="display:flex;align-items:flex-start;gap:9px;margin-top:22px;padding:13px 15px;background:#F4F8FC;border:1px solid #E2E9F1;border-radius:9px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1763C6" stroke-width="1.8" style="flex:none;margin-top:1px"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"></path><path d="M9 12l2 2 4-4"></path></svg>
+        <span style="font-size:11.5px;color:#5A7088;line-height:1.55">L'accès est nominatif. Les comptes sont créés par un administrateur — aucune inscription publique. Contactez votre coordination régionale pour obtenir vos identifiants.</span>
+      </div>
+      <div style="text-align:center;font-size:11px;color:#9DAEC0;margin-top:26px">Assistance technique : support@sanitrax.sn · +221 33 000 00 00</div>
+    </div>
+    <div style="margin-top:auto;padding-top:24px;text-align:center;font-size:10.5px;color:#A9B7C6">Sanitrax v2.4 · Connexion chiffrée TLS</div>
+  </div>
+</div>
+
+<script>
+  // Afficher / masquer le mot de passe
+  document.getElementById('togglePwd').addEventListener('click', function () {
+    var p = document.getElementById('password');
+    p.type = p.type === 'password' ? 'text' : 'password';
+  });
+  // Boutons de rôle : pré-remplissent l'e-mail + le mot de passe de démo
+  document.querySelectorAll('.role').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('.role').forEach(function (x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      document.getElementById('email').value = b.dataset.email;
+      document.getElementById('password').value = 'sanitrax2026';
+    });
+  });
+</script>
+</body>
+</html>
